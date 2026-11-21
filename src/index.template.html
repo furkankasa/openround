@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenRound — Drift Round Blast Design</title>
+<style>/*FONTS*/
+/* VOICE  calm, exact, field-engineer: a mine plan, not a dashboard; night-shift variant for long sessions
+   IDEA   the mine plan table: a surveyed face plan pinned on a light plan sheet, with a map legend that is also the control panel
+   PICTURE the drift face drawing, full height in the centre; legend swatches on the left; one result strip on the drawing
+   COLOUR plan paper #E9ECE6, slate ink #24313B, malachite #1F7A5C, limonite ochre #C3892A, hematite #9C3A2D, survey blue #2F5D8A
+   TYPE   Archivo only: expanded cut (wdth 118) for names and headline figures, condensed cut (wdth 80) for data, forms and tables */
+:root{color-scheme:light;
+  --paper:#E9ECE6;--sheet:#F7F8F4;--panel:#F1F3EE;--rule:#C9CFC6;--rule2:#DCE0D8;--field:#fff;
+  --ink:#24313B;--ink2:#4B5862;--mute:#78848C;
+  --mal:#1F7A5C;--malT:#E2EEE8;--ochre:#C3892A;--ochreT:#F6EBD5;--hem:#9C3A2D;--hemT:#F5E1DD;--blue:#2F5D8A;
+  --c-perim:#9C3A2D;--c-buffer:#2F5D8A;--c-stope:#1F7A5C;--c-lifter:#6B5236;--c-cut:#5B4B8A;
+  --s-paper:#FBFBF8;--s-ink:#24313B;--s-ink2:#4B5862;--s-mute:#78848C;--s-gmin:#E6E9E3;--s-gmaj:#CDD3CA;--s-ext:#C2C8BF;--s-fill:rgba(36,49,59,.035);
+  --s-hole:#1d262d;--s-empty:#ffffff;--s-shadow:rgba(36,49,59,.10);--s-tag:#24313B;--s-tagt:#ffffff;--s-tagt2:#C9D9EA;--s-brand:#1F7A5C;--s-brandt:#ffffff;--s-brandt2:#F6EBD5;
+  --f:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+:root[data-theme=dark]{color-scheme:dark;
+  --paper:#1E252B;--sheet:#232B31;--panel:#283037;--rule:#3A444C;--rule2:#2F3840;--field:#1B2126;
+  --ink:#D5DBD6;--ink2:#AEB7B2;--mute:#808C92;
+  --mal:#4FA383;--malT:#22392F;--ochre:#CFA25A;--ochreT:#3A3226;--hem:#CF8172;--hemT:#3B2A27;--blue:#86A9CC;
+  --c-perim:#C9786B;--c-buffer:#7FA6CC;--c-stope:#56A886;--c-lifter:#B79A77;--c-cut:#A497CF;
+  --s-paper:#2A3238;--s-ink:#D5DBD6;--s-ink2:#AEB7B2;--s-mute:#86929A;--s-gmin:#30393F;--s-gmaj:#3C474F;--s-ext:#4A555D;--s-fill:rgba(213,219,214,.03);
+  --s-hole:#14191D;--s-empty:#E3E8E4;--s-shadow:rgba(0,0,0,.28);--s-tag:#D5DBD6;--s-tagt:#1E252B;--s-tagt2:#3D5875;--s-brand:#2C5E4B;--s-brandt:#E8EEE9;--s-brandt2:#CFA25A}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;
+  --paper:#1E252B;--sheet:#232B31;--panel:#283037;--rule:#3A444C;--rule2:#2F3840;--field:#1B2126;
+  --ink:#D5DBD6;--ink2:#AEB7B2;--mute:#808C92;
+  --mal:#4FA383;--malT:#22392F;--ochre:#CFA25A;--ochreT:#3A3226;--hem:#CF8172;--hemT:#3B2A27;--blue:#86A9CC;
+  --c-perim:#C9786B;--c-buffer:#7FA6CC;--c-stope:#56A886;--c-lifter:#B79A77;--c-cut:#A497CF;
+  --s-paper:#2A3238;--s-ink:#D5DBD6;--s-ink2:#AEB7B2;--s-mute:#86929A;--s-gmin:#30393F;--s-gmaj:#3C474F;--s-ext:#4A555D;--s-fill:rgba(213,219,214,.03);
+  --s-hole:#14191D;--s-empty:#E3E8E4;--s-shadow:rgba(0,0,0,.28);--s-tag:#D5DBD6;--s-tagt:#1E252B;--s-tagt2:#3D5875;--s-brand:#2C5E4B;--s-brandt:#E8EEE9;--s-brandt2:#CFA25A}}
+*{box-sizing:border-box;min-width:0}html,body{margin:0;height:100%}
+body{font:14px/1.5 var(--f);font-stretch:96%;color:var(--ink);background:var(--paper);display:flex;flex-direction:column;overflow:hidden;font-variant-numeric:tabular-nums}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+header{display:flex;align-items:baseline;gap:18px;padding:12px 18px 10px;background:var(--sheet);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:14px;min-width:0}
+.logo{font-weight:700;font-size:15px;font-stretch:118%;letter-spacing:.2px;color:var(--mal);white-space:nowrap}
+#projName{font-size:26px;line-height:1.1;font-weight:650;font-stretch:118%;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56vw}
+.brand small{color:var(--mute);font-size:13px;font-stretch:85%}
+header .sp{flex:1}
+.btn{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:6px 12px;cursor:pointer;font-size:13.5px;font-stretch:88%;font-weight:500;color:var(--ink);line-height:1.3}
+.btn:hover{border-color:var(--ink2)}.btn.on{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.btn.primary{background:var(--mal);border-color:var(--mal);color:var(--sheet);font-weight:600}
+.btn:disabled{opacity:.4;cursor:default}.btn.danger{color:var(--hem);border-color:var(--hem)}
+#lang{display:flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden}#lang .btn{border:none;border-radius:0;padding:6px 9px}
+#tools{display:flex;align-items:center;gap:6px;padding:7px 18px;background:var(--sheet);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+#tools .sep{width:1px;height:22px;background:var(--rule);margin:0 6px}
+#tools select{background:var(--field);border:1px solid var(--rule);border-radius:4px;padding:5px 6px;font-stretch:85%}
+#tools [data-mode].on{background:var(--ochre);border-color:var(--ochre);color:var(--sheet);font-weight:600}
+#zoomPct{font-stretch:80%;width:46px;text-align:center;color:var(--ink2)}
+#tools label{display:flex;align-items:center;gap:6px;font-stretch:88%;color:var(--ink2)}
+#tools input[type=checkbox],#viewbar input{accent-color:var(--mal)}
+#coord{margin-left:auto;font-stretch:80%;color:var(--blue);white-space:nowrap}
+#viewbar{display:flex;align-items:center;gap:4px 16px;flex-wrap:wrap;padding:6px 18px;background:var(--panel);border-bottom:1px solid var(--rule);font-size:13px;font-stretch:85%;color:var(--ink2)}
+#viewbar .vl{color:var(--mute);margin-right:2px}
+#viewbar label{display:flex;align-items:center;gap:5px;cursor:pointer}#viewbar input[type=range]{width:120px}
+main{flex:1;display:grid;grid-template-columns:304px minmax(0,1fr) 400px;min-height:0}
+#left{overflow:auto;background:var(--sheet);border-right:1px solid var(--rule)}
+#legend{padding:14px 16px 10px;border-bottom:1px solid var(--rule)}
+#legend h2{margin:0 0 8px;font-size:15px;font-weight:650;font-stretch:118%}
+.lg{display:grid;grid-template-columns:20px 1fr auto auto;gap:8px;align-items:center;width:100%;padding:5px 6px;margin:0 -6px;border:none;background:none;border-radius:4px;cursor:pointer;text-align:left;font-stretch:88%}
+.lg:hover{background:var(--panel)}.lg.on{background:var(--ochreT)}
+.lg .sw{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.35)}
+.lg .n{color:var(--ink2)}.lg .k{color:var(--mute);font-stretch:80%;min-width:54px;text-align:right}
+#legend .lgnote{margin:6px 0 0;color:var(--mute);font-size:12.5px;font-stretch:85%}
+#form{padding:4px 16px 40px}
+.sec{border-bottom:1px solid var(--rule2);padding:2px 0}.sec.top{padding:10px 0 8px}
+summary{cursor:pointer;font-size:14.5px;font-weight:600;font-stretch:104%;padding:9px 0;list-style:none;display:flex;align-items:center;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary .sw{width:14px;height:14px;flex:none;border-radius:2px;border:1px solid rgba(0,0,0,.3)}
+summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:1.5px solid var(--mute);border-bottom:1.5px solid var(--mute);transform:rotate(45deg) translateY(-2px);transition:transform .15s}
+details[open] summary::after{transform:rotate(225deg) translateY(-1px)}
+details>.row:last-child,details>.ex:last-child{margin-bottom:10px}
+.row{display:grid;grid-template-columns:1fr 92px 38px;align-items:center;gap:8px;padding:2px 0 2px 24px}
+.sec.top .row{padding-left:0}
+.row span{color:var(--ink2);font-size:13.5px;font-stretch:88%;line-height:1.3}.row i{font-style:normal;color:var(--mute);font-size:12.5px;font-stretch:80%}
+.row input[type=number],.row input[type=text],.row select{width:100%;padding:5px 7px;border:1px solid var(--rule);border-radius:4px;background:var(--field);font-stretch:80%;font-size:14px}
+.row input:focus,.row select:focus{outline:none;border-color:var(--ochre);box-shadow:0 0 0 2px var(--ochreT)}
+.row input[type=text]{grid-column:2/4}.sec.top .row,.ex .row:nth-child(2){grid-template-columns:1fr 168px 0}
+.row.chk{grid-template-columns:18px 1fr}.row.chk input{accent-color:var(--mal)}
+.row input:disabled{opacity:.45}
+.ex{margin:6px 0 10px 24px;padding-left:10px;border-left:2px solid}.ex .row{padding-left:0}
+.exh{font-weight:600;margin:4px 0 2px;font-size:13.5px;font-stretch:96%}
+#centre{position:relative;min-height:0;background:var(--paper)}
+#plot{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;user-select:none}
+#plot[data-mode=select]{cursor:grab}#plot[data-mode=ruler],#plot[data-mode=add]{cursor:crosshair}
+#hint{position:absolute;left:14px;bottom:12px;font-size:12px;line-height:1.35;font-stretch:82%;color:var(--mute);pointer-events:none;max-width:calc(100% - 760px)}
+#strip{position:absolute;right:16px;bottom:14px;display:flex;gap:0;background:var(--sheet);border:1px solid var(--ink);box-shadow:3px 3px 0 var(--s-shadow)}
+#strip div{padding:7px 14px 8px;border-left:1px solid var(--rule)}#strip div:first-child{border-left:none}
+#strip b{display:block;font-size:22px;line-height:1.1;font-weight:650;font-stretch:118%}#strip span{font-size:12px;color:var(--mute);font-stretch:85%}
+#strip b small{font-size:12px;font-weight:500;color:var(--ink2);font-stretch:85%;margin-left:3px}
+#strip .bad b{color:var(--hem)}
+#tip{position:absolute;display:none;z-index:5;background:var(--sheet);border:1px solid var(--ink);border-radius:3px;padding:9px 12px 8px;box-shadow:4px 4px 0 var(--s-shadow);pointer-events:none;min-width:230px;max-width:310px}
+#tip .tth{font-weight:650;font-stretch:110%;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+#tip .tth b,.selh b{width:12px;height:12px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.4)}
+#tip table{width:100%;border-collapse:collapse;font-size:13px}#tip td{padding:2px 0;border:none;white-space:normal;vertical-align:top}
+#tip td:first-child{color:var(--mute);padding-right:12px;white-space:nowrap;font-stretch:85%}#tip td:last-child{font-stretch:80%;text-align:right}#tip small{color:var(--mute)}
+#right{display:flex;flex-direction:column;min-height:0;background:var(--sheet);border-left:1px solid var(--rule)}
+.tabs{display:flex;flex-wrap:wrap;gap:0 2px;border-bottom:1px solid var(--rule);padding:4px 10px 0}
+.tabs button{border:none;background:none;padding:9px 8px 8px;cursor:pointer;font-size:13.5px;font-stretch:88%;color:var(--ink2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button:hover{color:var(--ink)}.tabs button.on{color:var(--ink);font-weight:600;border-bottom-color:var(--mal)}
+#warn{font-size:13px;color:var(--hem);font-stretch:90%}#warn:empty{display:none}
+#err{color:var(--hem);padding:0 16px;font-size:13px}
+#res{overflow:auto;padding:14px 16px;flex:1;min-height:0}
+#selbox{border-top:1px solid var(--rule);padding:10px 16px 14px;background:var(--panel)}
+#selbox h4{margin:0 0 6px;font-size:14px;font-weight:650;font-stretch:110%}
+#selCard .ph{color:var(--mute);font-size:13px}.selh{font-weight:650;font-stretch:110%;display:flex;gap:8px;align-items:center;margin-bottom:4px}
+#selCard .row{padding-left:0}#selCard .btn{margin-top:8px}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin-bottom:16px;border-top:1px solid var(--rule)}
+.kpi{padding:8px 2px 9px;border-bottom:1px solid var(--rule2)}.kpi:nth-child(odd){padding-right:12px;border-right:1px solid var(--rule2)}.kpi:nth-child(even){padding-left:12px}
+.kl{color:var(--mute);font-size:12.5px;font-stretch:85%;line-height:1.25}
+.kv{font-size:20px;font-weight:650;font-stretch:112%;line-height:1.2}.kv small{font-size:12px;color:var(--ink2);font-weight:450;font-stretch:85%}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--rule2);white-space:nowrap;font-size:13px;font-stretch:82%}
+th{color:var(--mute);font-weight:500;font-size:12.5px}
+td:not(:first-child),th:not(:first-child){text-align:right}
+tr.sel td,tr.cur td{background:var(--ochreT)}.holes tr{cursor:pointer}.holes tr:hover td{background:var(--panel)}
+.two{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:14px}
+.note{color:var(--ink2);font-size:13px;font-stretch:92%}.scroll{overflow:auto}
+.bar{height:8px;background:var(--mal);border-radius:1px}
+.chart{width:100%;height:auto;margin-top:8px}.chart .gl{stroke:var(--rule2)}.chart .axl{stroke:var(--ink2)}.chart .tk{font-size:11px;fill:var(--ink2);font-family:var(--f);font-stretch:85%}
+.inl{display:inline-grid;grid-template-columns:auto 200px;margin-top:10px}
+h3{font-size:14.5px;font-weight:650;font-stretch:110%;color:var(--ink);margin:18px 0 6px}
+.about{font-size:13.5px}.about code{background:var(--panel);border:1px solid var(--rule2);padding:0 4px;border-radius:3px;font-size:12.5px;font-stretch:85%}.about li{margin:4px 0}
+.disc{background:var(--ochreT);border-left:3px solid var(--ochre);padding:8px 12px;color:var(--ink)}
+footer{padding:6px 18px;background:var(--sheet);border-top:1px solid var(--rule);font-size:12px;color:var(--mute);font-stretch:85%}
+footer b{color:var(--ochre)}
+#printArea{display:none}
+/* sheet */
+.sheet .paper{fill:var(--s-paper);filter:drop-shadow(4px 5px 0 var(--s-shadow))}.sheet .frame{fill:none;stroke:var(--s-ink);stroke-width:1.3}
+.sheet .gmin{stroke:var(--s-gmin);stroke-width:.5;fill:none}.sheet .gmaj{stroke:var(--s-gmaj);stroke-width:.9;fill:none}.sheet .gl{fill:var(--s-mute);font:10px var(--f);font-stretch:80%}
+.sheet .cdesign{fill:var(--s-fill);stroke:var(--s-ink);stroke-width:2.2}.sheet .clook{fill:none;stroke:var(--c-perim);stroke-width:1.1;stroke-dasharray:6 4}
+.sheet .coff{fill:none;stroke-width:1;stroke-dasharray:2 3}.sheet .cbuf{stroke:var(--c-buffer)}.sheet .cfull{stroke:var(--c-stope)}
+.sheet .dmg circle{fill-opacity:.06;stroke-opacity:.5;stroke-width:.9}
+.sheet .spl{fill:none;stroke:var(--c-buffer);stroke-opacity:.55;stroke-width:.7;stroke-dasharray:3 2}.sheet .sp{fill:var(--blue);font-family:var(--f);font-stretch:80%;text-anchor:middle}
+.sheet .dim{fill:none;stroke:var(--s-ink2);stroke-width:.8}.sheet .dt{fill:var(--s-ink);font-family:var(--f);font-stretch:80%}.sheet .ext{fill:none;stroke:var(--s-ext);stroke-width:.5;stroke-dasharray:2 2}
+.sheet .lk{fill:none;stroke:var(--s-mute);stroke-width:.8}
+.sheet .callout{fill:none;stroke:var(--ochre);stroke-width:1.4;stroke-dasharray:6 3}.sheet .callt{fill:var(--ochre);font-family:var(--f);font-stretch:118%;font-weight:700}
+.sheet .h{stroke:var(--s-hole);stroke-width:.8}.sheet .h.empty{fill:var(--s-empty);stroke:var(--s-hole);stroke-width:1.4}.sheet .einner{fill:none;stroke:var(--s-hole);stroke-width:.8}
+.sheet .h.sel{stroke:var(--ochre);stroke-width:3.2}.sheet .hit{fill:transparent;cursor:pointer}
+.sheet .h.dimmed,.sheet .dl.dimmed{opacity:.16}
+.sheet .h.chg{animation:chg 1.1s ease-out 1}
+@keyframes chg{0%{stroke:var(--ochre);stroke-width:9;stroke-opacity:.9}100%{stroke:var(--s-hole);stroke-width:.8;stroke-opacity:1}}
+@media (prefers-reduced-motion:reduce){.sheet .h.chg{animation:none}summary::after{transition:none}}
+.sheet .dl{fill:var(--s-ink);font-family:var(--f);font-stretch:85%;font-weight:600;pointer-events:none}.sheet .hid{fill:var(--s-mute);font-family:var(--f);font-stretch:80%;pointer-events:none}
+.sheet .dbox{fill:var(--s-paper);stroke:var(--s-ink);stroke-width:1}.sheet .dhead{fill:var(--s-ink);font-family:var(--f);font-stretch:112%;font-weight:650}.sheet .dsub{fill:var(--s-ink2);font-family:var(--f);font-stretch:80%}
+.sheet .qline{fill:none;stroke:var(--c-cut);stroke-width:.9;stroke-dasharray:4 3}.sheet .qt{fill:var(--c-cut);font-family:var(--f);font-stretch:85%;font-weight:600}.sheet .ctr{stroke:var(--ochre);stroke-width:1.2}
+.sheet .leg text{fill:var(--s-ink);font:12px var(--f);font-stretch:88%}
+.sheet .tb{fill:none;stroke:var(--s-ink);stroke-width:.9}.sheet .tbl{fill:var(--s-mute);font-family:var(--f);font-stretch:85%}.sheet .tbv{fill:var(--s-ink);font-family:var(--f);font-stretch:90%;font-weight:600}
+.sheet .tbbrand{fill:var(--s-brand)}.sheet .brandt{fill:var(--s-empty);font-family:var(--f);font-stretch:118%;font-weight:700}.sheet .brandt tspan{fill:var(--s-brandt2)}
+.sheet .meas line{stroke:var(--blue);stroke-width:2}.sheet .meas circle{fill:var(--blue)}.sheet .meas rect{fill:var(--s-tag);fill-opacity:.95}
+.sheet .meas .m1{fill:var(--s-empty);font:700 13px var(--f);font-stretch:110%}.sheet .meas .m2{fill:var(--s-tagt2);font:11px var(--f);font-stretch:85%}.sheet .meas.live line{stroke-dasharray:6 4}
+.sheet .snap{fill:none;stroke:var(--blue);stroke-width:2}.sheet .snapt{fill:var(--blue);font:600 12px var(--f);font-stretch:88%;paint-order:stroke;stroke:var(--s-paper);stroke-width:3px}
+/* shapes & import */
+.row.rng{grid-template-columns:1fr 70px 58px 30px}.row.rng input[type=range]{width:100%;accent-color:var(--mal)}.row.rng input[type=number]{padding:5px 5px}
+.imp{margin:8px 0 6px 24px}.imp .btn{width:100%}.imp .note{margin:6px 0 0;font-size:12.5px}.imp .note.bad{color:var(--hem)}#impPick .row{padding-left:0;margin-top:6px}#impPick .btn{margin-top:4px}
+/* minimalist additions */
+main.noright{grid-template-columns:304px minmax(0,1fr) 0}main.noright #right{display:none}
+#presets{display:flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+#presets button{border:none;border-left:1px solid var(--rule);background:var(--sheet);padding:6px 12px;cursor:pointer;font-size:13.5px;font-stretch:88%;color:var(--ink2)}
+#presets button:first-child{border-left:none}#presets button.on{background:var(--ink);color:var(--sheet);font-weight:600}
+#viewMenu{position:relative}#viewMenu summary{padding:6px 10px;border:1px solid var(--rule);border-radius:4px;font-size:13.5px;font-weight:500;font-stretch:88%;gap:8px}
+#viewMenu summary::after{width:6px;height:6px;margin-left:6px}
+#viewMenu .vm{position:absolute;z-index:20;top:calc(100% + 6px);left:0;background:var(--sheet);border:1px solid var(--ink);box-shadow:4px 4px 0 var(--s-shadow);padding:10px 14px;display:grid;gap:6px;min-width:240px}
+#viewMenu .vm label{display:flex;align-items:center;gap:8px;font-size:13.5px;font-stretch:88%;color:var(--ink);text-transform:none}
+#viewMenu .vm .pl{display:grid;gap:4px;margin-top:6px;padding-top:8px;border-top:1px solid var(--rule2)}#viewMenu input{accent-color:var(--mal)}
+.advt{display:flex;align-items:center;gap:8px;width:100%;margin:14px 0 4px;padding:8px 0;border:none;border-top:1px dashed var(--rule);background:none;cursor:pointer;color:var(--ink2);font-size:13.5px;font-stretch:96%;font-weight:600}
+.advt span{margin-left:auto;font-weight:500;color:var(--mute);font-stretch:85%}.advt::before{content:"";width:7px;height:7px;border-right:1.5px solid var(--mute);border-bottom:1.5px solid var(--mute);transform:rotate(-45deg)}
+.advt[aria-expanded=true]::before{transform:rotate(45deg)}
+.flag{display:flex;align-items:center;gap:8px;padding:0 14px;border:none;border-right:1px solid var(--rule);background:var(--hemT);color:var(--hem);cursor:pointer;font-stretch:88%;font-size:13px}
+.flag b{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--hem);color:var(--sheet);font-size:13px;font-weight:700}
+#strip>div:first-of-type{border-left:none}
+.checks{margin:0 0 14px;padding:8px 12px 8px 28px;background:var(--hemT);border-left:3px solid var(--hem);color:var(--ink);font-size:13px;font-stretch:92%}.checks li{margin:2px 0}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;border:1px solid rgba(0,0,0,.3);vertical-align:0}
+details.more{margin-top:16px;border-top:1px solid var(--rule)}details.more>summary{font-size:14px}details.more table{margin-bottom:12px}
+.costt td.barc{width:40%}h3.first{margin-top:2px}
+.tbtn{padding:6px 10px}
+@media (max-width:1150px){main{grid-template-columns:270px minmax(0,1fr)}#right{grid-column:1/-1;max-height:45vh}body{overflow:auto}#strip{display:none}}
+@media (max-width:720px){main{grid-template-columns:1fr}#left{max-height:38vh}#centre{min-height:62vh}#projName{font-size:20px;max-width:90vw}}
+@media print{header,#tools,#viewbar,main,footer{display:none!important}#printArea{display:block}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">OpenRound</div><div id="projName"></div><small data-i="appSub"></small></div>
+  <div class="sp"></div>
+  <button class="btn" id="save" data-i="save"></button><button class="btn" id="load" data-i="load"></button>
+  <button class="btn" id="csv" data-i="csv"></button><button class="btn" id="dxf" data-i="dxf"></button><button class="btn primary" id="print" data-i="print"></button><button class="btn tbtn" id="themeBtn"></button><button class="btn tbtn" id="helpBtn" data-i="help"></button>
+  <div id="lang"><button class="btn" data-l="en">EN</button><button class="btn" data-l="tr">TR</button><button class="btn" data-l="ru">RU</button></div>
+  <input type="file" id="file" accept=".json" hidden>
+</header>
+<div id="tools">
+  <button class="btn on" data-mode="select" data-i="mSelect"></button>
+  <button class="btn" data-mode="add" data-i="mAdd"></button><select id="addType" aria-label="Hole type"></select>
+  <button class="btn" data-mode="ruler" data-i="mRuler"></button><button class="btn" id="mclear" data-i="mClear"></button>
+  <span class="sep"></span>
+  <div id="presets" role="group"></div><details id="viewMenu"></details>
+  <span class="sep"></span>
+  <button class="btn" id="zout" aria-label="Zoom out">−</button><span id="zoomPct">100%</span><button class="btn" id="zin" aria-label="Zoom in">+</button><button class="btn" id="zfit" data-i="fit"></button>
+  <span class="sep"></span>
+  <label><input type="checkbox" id="lock"> <span data-i="lock"></span></label><button class="btn" id="regen" data-i="regen"></button>
+  <span id="coord"></span><button class="btn" id="panelBtn" data-i="panel" aria-pressed="true"></button>
+</div>
+<main>
+  <aside id="left"><div id="legend"></div><div id="form"></div></aside>
+  <section id="centre"><svg id="plot" class="sheet" xmlns="http://www.w3.org/2000/svg" data-mode="select"></svg><div id="tip"></div><div id="strip"></div><div id="hint" data-i="hintKeys"></div></section>
+  <aside id="right">
+    <div class="tabs">
+      <button class="on" data-t="summary" data-i="tSummary"></button><button data-t="holes" data-i="tHoles"></button>
+      <button data-t="analysis" data-i="tAnalysis"></button><button data-t="valid" data-i="tValid"></button>
+    </div>
+    <div id="warn"></div><div id="err"></div>
+    <div id="res"></div>
+    <div id="selbox"><h4 data-i="selTitle"></h4><div id="selCard"></div></div>
+  </aside>
+</main>
+<footer><b>⚠</b> <span data-i="disclaimer"></span></footer>
+<div id="printArea"></div>
+<template id="aboutTpl"><div class="about">
+<p class="disc">{{disc}}</p>
+<h3>Design methods</h3>
+<ul>
+<li><b>Buffer Row</b> (Hustrulid &amp; Johnson 2008; Iverson et al. 2013): buffer holes are offset from the design perimeter by their practical damage radius R<sub>d</sub>, so their damage circles just reach the perimeter; smoothwall holes on the lookout contour clean the remaining cusps; lifters, cut and stoping follow Holmberg.</li>
+<li><b>Charge Region</b>: three charge strengths (smoothwall, buffer, full). Maximum burden of each by the Modified Ash energy equation <code>B = 25·De·√[(2.65/SGr)(SGe·RWS/0.82)]</code>; offsets equal to the burden of the outer region; spacing S = K<sub>S</sub>·B.</li>
+<li><b>Holmberg</b> (Persson, Holmberg &amp; Lee 1994): Langefors–Kihlström burden <code>B = 0.9·25·De·√[0.4π(2.65/SGr)SGe·RWS/(c·f·S/B)]</code> with f = 1.45 (lifters, up/horizontal stoping) or 1.20 (downward stoping), contour spacing E ≈ 15–16·d, E/B = 0.8.</li>
+<li><b>Cut</b>: parallel-hole cut, equivalent empty diameter φ = d<sub>e</sub>√n; first quadrangle a = 1.5φ; next quadrangles <code>B = 0.088·√(W·q·s/(d·c))</code>, W<sub>n</sub> = √2(B + W/2); drillable depth for 95% pull <code>H = 0.15 + 34.1φ − 39.4φ²</code>.</li>
+<li><b>Practical burden</b> = maximum burden − (collaring error + angular deviation × hole length).</li>
+</ul>
+<h3>Damage models (practical damage radius R<sub>d</sub>)</h3>
+<ul>
+<li>Modified Ash energy: <code>Rd = 12.5·De·√(RBS·2.65/SGr)</code> · pressure: × (De/Dh) under the root.</li>
+<li>Langefors–Kihlström: <code>Rd = 0.9·12.5·De·√(0.4π·SGe·RWS/(c·f·S/B))</code> · Etkin: c replaced by the powder factor from the cracking-resistance tables (ammonite → ANFO energy correction 4.3/3.82). <i>Class 5 “deep” average in the source table repeats class 4; the range midpoint 0.6 kg/m³ is used here.</i></li>
+<li>Holmberg–Persson PPV: <i>sum</i> form <code>PPV = 2Kq<sup>α</sup>Δz<sup>α</sup>Σ R<sub>i</sub><sup>−β</sup></code> (result depends on Δz) and the original <i>integral</i> form <code>PPV = K[q∫dz/R<sup>β/α</sup>]<sup>α</sup></code>; R<sub>d</sub> is where PPV equals the critical PPV.</li>
+<li>Johnson (Hustrulid bar): <code>σc = Pw√(rh/Rd)·e<sup>−b·Rd</sup></code>, Pw = Pe(De/Dh)<sup>n</sup>, Pe = ρe·VOD²/8.</li>
+<li>Sher quasi-static crushed-zone model with Jones–Miller gas expansion (γ₁ = 3, γ₂ = 1.27, a*/a₀ = 1.89).</li>
+</ul>
+<h3>Additions beyond the original DRIFT program</h3>
+<ul><li>Perimeter check: coverage of the design perimeter by damage circles and depth of damage beyond it, at any section plane between collar and toe.</li>
+<li>Side-by-side comparison of all damage models and R<sub>d</sub> vs decoupling ratio.</li>
+<li>Explosives presets, cartridge counts, drilling/energy/powder factors, cost per round, per metre and per tonne.</li>
+<li>Manual editing with live recalculation, JSON save/open, hole list CSV, DXF (2D face plan + 3D hole traces, z = advance direction), printable report, EN/TR/RU.</li></ul>
+<h3>Verification</h3>
+<ul><li>Explosion pressure for ANFO 850 kg/m³, 3.5 km/s: 1302 MPa (report: 1300 MPa).</li>
+<li>Etkin example (dolomite, 0.75 m joints, 1.5 mm aperture): class 4, 1.15 kg/m³ ammonite — matches the report.</li>
+<li>Modified Ash fully coupled ANFO in rock SG 2.65: R<sub>d</sub>/r<sub>h</sub> = 25 and B = 25·Dh — matches the report.</li>
+<li>Sher granite example: b/a₀ = 21.3 (report states ≈ 25; the report does not give all intermediate assumptions).</li></ul>
+<h3>References</h3>
+<ul><li>NIOSH [2019]. A blast design technique to reduce risk of injury from ground falls (DRIFT). Kuchta M, Iverson S, Hustrulid W. DHHS (NIOSH) Pub. No. 2019-129. doi:10.26616/NIOSHPUB2019129</li>
+<li>Persson P-A, Holmberg R, Lee J [1994]. Rock blasting and explosives engineering. CRC Press.</li>
+<li>Iverson SR, Hustrulid WA, Johnson JC [2013]. A new perimeter control blast design concept for underground metal/nonmetal drifting applications. NIOSH RI 9691.</li>
+<li>Holmberg R, Persson P-A [1978]. The Swedish approach to contour blasting. ISEE.</li>
+<li>Etkin MB et al. [2001]. Protecting external rock bodies from blasting damage. Hydrotechnical Construction 35(9).</li>
+<li>Sher EN, Aleksandrova NI [2007]. Effect of borehole charge structure on the parameters of a failure zone in rocks under blasting. J Mining Science 43(4).</li>
+<li>Johnson JC [2010]. The Hustrulid bar — a dynamic strength test and its application to the cautious blasting of rock. PhD, University of Utah.</li></ul>
+<p class="note">OpenRound · units metric · all calculations run locally in your browser.</p>
+</div></template>
+<script>/*ENGINE*/</script>
+<script>/*DEFAULTS*/</script>
+<script>/*I18N*/</script>
+<script>/*APP*/</script>
+</body>
+</html>

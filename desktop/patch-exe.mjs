@@ -1,0 +1,14 @@
+import * as ResEdit from 'resedit';
+import fs from 'fs';
+const exePath = process.argv[2];
+const exe = ResEdit.NtExecutable.from(fs.readFileSync(exePath), { ignoreCert: true });
+const res = ResEdit.NtExecutableResource.from(exe);
+const iconFile = ResEdit.Data.IconFile.from(fs.readFileSync(new URL('./build/icon.ico', import.meta.url)));
+ResEdit.Resource.IconGroupEntry.replaceIconsForResource(res.entries, 1, 1033, iconFile.icons.map(i => i.data));
+const vi = ResEdit.Resource.VersionInfo.fromEntries(res.entries)[0];
+vi.setStringValues({ lang: 1033, codepage: 1200 }, { FileDescription: 'OpenRound — drift round blast design', ProductName: 'OpenRound', CompanyName: 'OpenRound', LegalCopyright: 'MIT licence', OriginalFilename: 'OpenRound.exe', InternalName: 'OpenRound' });
+const [a, b, c] = JSON.parse(fs.readFileSync("package.json")).version.split(".").map(Number); vi.setFileVersion(a, b, c, 0, 1033); vi.setProductVersion(a, b, c, 0, 1033);
+vi.outputToResourceEntries(res.entries);
+res.outputResource(exe);
+fs.writeFileSync(exePath, Buffer.from(exe.generate()));
+console.log('patched', exePath);
