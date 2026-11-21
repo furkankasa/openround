@@ -5,7 +5,7 @@
 OpenRound designs the blast round for an underground drift or tunnel face: cut, stoping, buffer, perimeter and lifter holes, charging, timing and costs. It then checks how far the blast damage reaches beyond the design perimeter. It reproduces the methods of the NIOSH **DRIFT 2.0** program (Pub. 2019-129, public domain). It adds a CAD-like drawing sheet, any section shape, import of surveyed profiles, and exports for mine-planning software.
 
 **▶ Use it now: https://furkankasa.github.io/openround/** (nothing to install)
-**⬇ Windows app:** [Releases](https://github.com/furkankasa/openround/releases)
+**⬇ Windows app:** [Releases](https://github.com/furkankasa/openround/releases) · [Code signing policy](docs/code-signing.md)
 
 ![OpenRound — light theme](docs/img/openround-light.png)
 
@@ -70,6 +70,18 @@ cd desktop && npm install && npm run dist:win   # Windows exe (portable and inst
 The equations, assumptions and references are in [docs/methods.md](docs/methods.md). The main sources are:
 - NIOSH [2019]. *A blast design technique to reduce risk of injury from ground falls (DRIFT)*. Kuchta M., Iverson S., Hustrulid W. DHHS (NIOSH) Pub. No. 2019-129.
 - Persson P-A., Holmberg R., Lee J. [1994]. *Rock blasting and explosives engineering*. CRC Press.
+
+## Install and uninstall (Windows)
+
+- **Installer** (`OpenRound-x.y.z-setup.exe`): installs for the current user and adds Start menu and desktop shortcuts. To remove it, use *Settings → Apps → Installed apps → OpenRound → Uninstall*, or run `Uninstall OpenRound.exe` in the installation folder.
+- **Portable** (`…-portable.zip`): unzip and run. Nothing is written to the system; delete the file to remove it.
+- **Web** (`…-web.html` or the GitHub Pages link): nothing to install.
+
+OpenRound does not change system settings and does not send any data over the network. Projects are saved only where you choose.
+
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://signpath.io), certificate by [SignPath Foundation](https://signpath.org) (application in progress). The roles, the build process and the privacy statement are described in [docs/code-signing.md](docs/code-signing.md).
 
 ## Disclaimer
 
