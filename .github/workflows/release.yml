@@ -1,0 +1,35 @@
+name: Release
+on:
+  push: { tags: ['v*'] }
+  workflow_dispatch:
+permissions: { contents: write }
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm test
+      - run: npm run build
+      - name: Build Windows portable exe and installer
+        working-directory: desktop
+        run: |
+          npm install --no-audit --no-fund
+          npm run dist:win
+      # Code signing (SignPath Foundation, free for open source) is added here once the project is accepted.
+      # See docs/code-signing.md.
+      - name: Package downloads
+        shell: pwsh
+        run: |
+          $v = (Get-Content desktop/package.json | ConvertFrom-Json).version
+          Compress-Archive -Path "desktop/dist/OpenRound-$v-portable.exe" -DestinationPath "OpenRound-$v-win-x64-portable.zip"
+          Copy-Item dist/index.html "OpenRound-$v-web.html"
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          generate_release_notes: true
+          files: |
+            desktop/dist/OpenRound-*-setup.exe
+            OpenRound-*-win-x64-portable.zip
+            OpenRound-*-web.html
