@@ -855,6 +855,7 @@ function applyLang() {
   $$('#lang button').forEach(b => b.classList.toggle('on', b.dataset.l === lang));
   renderViewMenu();
   $('#themeBtn').textContent = T(curTheme() === 'dark' ? 'themeLight' : 'themeDark');
+  $('#ghLink').title = T('ghTip');
   setRight(inp.view.right !== false);
   buildForm(); run(); syncSel();
 }

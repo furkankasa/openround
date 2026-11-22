@@ -36,14 +36,17 @@
 body{font:14px/1.5 var(--f);font-stretch:96%;color:var(--ink);background:var(--paper);display:flex;flex-direction:column;overflow:hidden;font-variant-numeric:tabular-nums}
 button,select,input{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
-header{display:flex;align-items:baseline;gap:18px;padding:12px 18px 10px;background:var(--sheet);border-bottom:1px solid var(--rule);flex-wrap:wrap}
-.brand{display:flex;align-items:baseline;gap:14px;min-width:0}
+header{display:flex;align-items:baseline;gap:8px;padding:12px 18px 10px;background:var(--sheet);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:14px;min-width:0;margin-right:10px}
+@media(max-width:1480px){.brand small{display:none}}
 .logo{font-weight:700;font-size:15px;font-stretch:118%;letter-spacing:.2px;color:var(--mal);white-space:nowrap}
 #projName{font-size:26px;line-height:1.1;font-weight:650;font-stretch:118%;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56vw}
 .brand small{color:var(--mute);font-size:13px;font-stretch:85%}
 header .sp{flex:1}
 .btn{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:6px 12px;cursor:pointer;font-size:13.5px;font-stretch:88%;font-weight:500;color:var(--ink);line-height:1.3}
 .btn:hover{border-color:var(--ink2)}.btn.on{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.btn.gh svg{width:13px;height:13px;margin-right:5px;fill:var(--mal)}
 .btn.primary{background:var(--mal);border-color:var(--mal);color:var(--sheet);font-weight:600}
 .btn:disabled{opacity:.4;cursor:default}.btn.danger{color:var(--hem);border-color:var(--hem)}
 #lang{display:flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden}#lang .btn{border:none;border-radius:0;padding:6px 9px}
@@ -89,6 +92,7 @@ details>.row:last-child,details>.ex:last-child{margin-bottom:10px}
 #plot{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;user-select:none}
 #plot[data-mode=select]{cursor:grab}#plot[data-mode=ruler],#plot[data-mode=add]{cursor:crosshair}
 #hint{position:absolute;left:14px;bottom:12px;font-size:12px;line-height:1.35;font-stretch:82%;color:var(--mute);pointer-events:none;max-width:calc(100% - 760px)}
+#centre{container-type:inline-size}@container (max-width:1060px){#hint{display:none}}
 #strip{position:absolute;right:16px;bottom:14px;display:flex;gap:0;background:var(--sheet);border:1px solid var(--ink);box-shadow:3px 3px 0 var(--s-shadow)}
 #strip div{padding:7px 14px 8px;border-left:1px solid var(--rule)}#strip div:first-child{border-left:none}
 #strip b{display:block;font-size:22px;line-height:1.1;font-weight:650;font-stretch:118%}#strip span{font-size:12px;color:var(--mute);font-stretch:85%}
@@ -190,6 +194,7 @@ details.more{margin-top:16px;border-top:1px solid var(--rule)}details.more>summa
   <div class="sp"></div>
   <button class="btn" id="save" data-i="save"></button><button class="btn" id="load" data-i="load"></button>
   <button class="btn" id="csv" data-i="csv"></button><button class="btn" id="dxf" data-i="dxf"></button><button class="btn primary" id="print" data-i="print"></button><button class="btn tbtn" id="themeBtn"></button><button class="btn tbtn" id="helpBtn" data-i="help"></button>
+  <a class="btn tbtn gh" id="ghLink" href="https://github.com/furkankasa/openround" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .67.42l1.88 3.81 4.21.61a.75.75 0 0 1 .41 1.28l-3.04 2.97.72 4.19a.75.75 0 0 1-1.09.79L8 12.34l-3.76 1.98a.75.75 0 0 1-1.09-.79l.72-4.19L.83 6.37a.75.75 0 0 1 .41-1.28l4.21-.61L7.33.67A.75.75 0 0 1 8 .25z"/></svg>GitHub</a>
   <div id="lang"><button class="btn" data-l="en">EN</button><button class="btn" data-l="tr">TR</button><button class="btn" data-l="ru">RU</button></div>
   <input type="file" id="file" accept=".json" hidden>
 </header>
